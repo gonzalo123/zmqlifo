@@ -4,7 +4,6 @@
     "license":"MIT",
     "keywords":["cli", "process", "console", "zeromq", "zmq"],
     "type":"library",
-    "homepage":"https://github.com/gonzalo123/sh",
     "authors":[
         {
             "name":"Gonzalo Ayuso",
