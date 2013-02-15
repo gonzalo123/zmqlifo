@@ -1,18 +1,15 @@
 language: php
 
 php:
-  - 5.3.3
   - 5.3
   - 5.4
+  - 5.5
 
 before_script:
-  - sudo apt-get install -y libevent-dev libev-dev
-  - sh -c " if [ \"\$(php --re libevent | grep 'does not exist')\" != '' ]; then
-              (yes '' | pecl install libevent-beta)
-            fi"
-  - (git clone --recursive https://github.com/m4rw3r/php-libev && cd php-libev && phpize && ./configure --with-libev && make && make install)
-  - echo "extension=libev.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+  - git clone https://github.com/mkoppanen/php-zmq.git
+  - sh -c "cd php-zmq && phpize && ./configure && make --silent && sudo make install"
+  - echo "extension=zmq.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
   - composer self-update
-  - composer install --dev --prefer-source
+  - composer install --dev
 
 script: phpunit --coverage-text
