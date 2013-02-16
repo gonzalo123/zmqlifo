@@ -2,7 +2,7 @@ ZeroMQ LIFO Queue
 
 usage examples:
 
-* Client:
+Client:
 ```php
 <?php
 include __DIR__ . '/../vendor/autoload.php';
@@ -14,7 +14,7 @@ echo $queue->run("ls -latr")->getOutput();
 echo $queue->run("pwd")->getOutput();
 ```
 
-* Server
+Server
 ```php
 <?php
 include __DIR__ . '/../vendor/autoload.php';
