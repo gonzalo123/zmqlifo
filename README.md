@@ -32,3 +32,4 @@ $server->registerOnMessageCallback(function ($msg) {
 
 $server->run();
 ```
+
