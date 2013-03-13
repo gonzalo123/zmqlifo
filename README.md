@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/gonzalo123/zmqlifo.png?branch=master)](https://travis-ci.org/gonzalo123/zmqlifo)
+
 ZeroMQ LIFO Queue
 
 usage examples:
