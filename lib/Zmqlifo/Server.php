@@ -2,30 +2,23 @@
 
 namespace Zmqlifo;
 
-use React\EventLoop;
-use React\ZMQ\Context;
-use React\ZMQ\SocketWrapper;
-
 class Server
 {
     private $socket;
-    private $loop;
     private $socketDealer;
     private $callback;
 
-    public function __construct(EventLoop\LoopInterface $loop, SocketWrapper $socketDealer)
+    public function __construct(\ZMQSocket $socketDealer)
     {
-        $this->loop         = $loop;
         $this->socketDealer = $socketDealer;
     }
 
     public static function factory($socket)
     {
-        $loop         = EventLoop\Factory::create();
-        $context      = new Context($loop);
+        $context      = new \ZMQContext();
         $socketDealer = $context->getSocket(\ZMQ::SOCKET_DEALER);
 
-        $queueServer = new Server($loop, $socketDealer);
+        $queueServer = new Server($socketDealer);
         $queueServer->setSocket($socket);
 
         return $queueServer;
@@ -43,17 +36,18 @@ class Server
 
     public function run()
     {
-        $this->handleSockets();
-        $this->loop->run();
+        $this->socketDealer->bind($this->socket);
+
+        while (true) {
+            $this->tick();
+        }
     }
 
-    public function handleSockets()
+    public function tick()
     {
-        $this->socketDealer->on('message', function ($msg) {
-            $this->socketDealer->send($this->invokeCallback($msg));
-        });
-
-        $this->socketDealer->bind($this->socket);
+        $msg = $this->socketDealer->recv();
+        $result = $this->invokeCallback($msg);
+        $this->socketDealer->send($result);
     }
 
     public function invokeCallback($msg)

@@ -2,20 +2,14 @@
 
 namespace Zmqlifo;
 
-use React\EventLoop;
-use React\ZMQ\Context;
-use React\ZMQ\SocketWrapper;
-
 class Client
 {
     private $socket;
-    private $loop;
     private $socketDealer;
     private $output;
 
-    public function __construct(EventLoop\LoopInterface $loop, SocketWrapper $socketDealer)
+    public function __construct(\ZMQSocket $socketDealer)
     {
-        $this->loop         = $loop;
         $this->socketDealer = $socketDealer;
     }
 
@@ -28,30 +22,24 @@ class Client
     {
         $this->socketDealer->connect($this->socket);
         $this->socketDealer->send($command);
-        $this->socketDealer->on('message', function ($msg) {
-            $this->output = $msg;
-            $this->loop->stop();
-        });
-        $this->loop->run();
 
         return $this;
     }
 
     public function getOutput()
     {
-        return $this->output;
+        return $this->socketDealer->recv();
     }
 
     static function factory($socket)
     {
-        $loop    = EventLoop\Factory::create();
-        $context = new Context($loop);
+        $context = new \ZMQContext();
         $dealer  = $context->getSocket(\ZMQ::SOCKET_DEALER);
 
-        $queue = new Client($loop, $dealer);
+        $queue = new Client($dealer);
         $queue->setSocket($socket);
 
         return $queue;
     }
 }
- 
+
