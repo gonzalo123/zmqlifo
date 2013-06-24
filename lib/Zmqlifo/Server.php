@@ -54,6 +54,4 @@ class Server
     {
         return call_user_func($this->callback, $msg);
     }
-
-
 }
